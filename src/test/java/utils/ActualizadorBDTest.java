@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
- * @author orian
+ * @author oriana - Equipo 1 - Autenticación y Red Familiar
  */
 public class ActualizadorBDTest {
      @Test

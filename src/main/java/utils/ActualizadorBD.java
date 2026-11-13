@@ -13,7 +13,7 @@ import java.sql.Statement;
 
 /**
  *
- * @author oriana
+ * @author oriana - Equipo 1 - Autenticación y Red Familiar
  */
 public final class ActualizadorBD {
      private ActualizadorBD() { }
@@ -24,20 +24,19 @@ public final class ActualizadorBD {
         if (con == null) {
             return false;
         }
-        try {
-            if (existeColumna(con, "familiares", "familiar_usuario_id")) {
-                return true; // Ya está actualizada, no hay nada que hacer
+        try (Statement st = con.createStatement()) {
+            if (!existeColumna(con, "familiares", "familiar_usuario_id")) {
+                st.executeUpdate("ALTER TABLE familiares "
+                        + "ADD COLUMN familiar_usuario_id INT(11) NULL AFTER usuario_id, "
+                        + "ADD UNIQUE KEY uk_vinculo_familiar (usuario_id, familiar_usuario_id), "
+                        + "ADD CONSTRAINT fk_familiar_usuario "
+                        + "FOREIGN KEY (familiar_usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE");
+                System.out.println("Base de datos actualizada: se agregó familiares.familiar_usuario_id");
             }
-            // Mismo cambio que sql/equipo1_red_familiar.sql
-            String sql = "ALTER TABLE familiares "
-                    + "ADD COLUMN familiar_usuario_id INT(11) NULL AFTER usuario_id, "
-                    + "ADD UNIQUE KEY uk_vinculo_familiar (usuario_id, familiar_usuario_id), "
-                    + "ADD CONSTRAINT fk_familiar_usuario "
-                    + "FOREIGN KEY (familiar_usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE";
-            try (Statement st = con.createStatement()) {
-                st.executeUpdate(sql);
+            if (!existeColumna(con, "familiares", "es_principal")) {
+                st.executeUpdate("ALTER TABLE familiares ADD COLUMN es_principal TINYINT(1) NOT NULL DEFAULT 0");
+                System.out.println("Base de datos actualizada: se agregó familiares.es_principal");
             }
-            System.out.println("Base de datos actualizada: se agregó familiares.familiar_usuario_id");
             return true;
         } catch (SQLException e) {
             System.err.println("No se pudo actualizar la base de datos: " + e.getMessage());
