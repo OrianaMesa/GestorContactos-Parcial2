@@ -3,6 +3,7 @@ package views;
 import models.Familiar;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 /**
@@ -57,6 +58,7 @@ public class FamiliaresView extends JDialog {
 
         modeloFamiliares = crearModelo("ID", "Documento", "Nombre", "Teléfono", "Estado");
         tblFamiliares = crearTabla(modeloFamiliares);
+        colorearEstados(tblFamiliares);
         panelFamiliares.add(new JScrollPane(tblFamiliares), BorderLayout.CENTER);
 
         JPanel surFamiliares = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -92,6 +94,35 @@ public class FamiliaresView extends JDialog {
         // Ocultar la columna ID (se usa internamente, no se muestra)
         tabla.removeColumn(tabla.getColumnModel().getColumn(0));
         return tabla;
+    }
+
+    // Pinta la columna "Estado" según el valor:
+    // verde = SEGURO, rojo = NECESITA AYUDA, gris = DESCONOCIDO.
+    // Si la fila está seleccionada se deja el color normal de selección, para que se vea cuál se eligió.
+    private void colorearEstados(JTable tabla) {
+        tabla.getColumn("Estado").setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object valor, boolean seleccionada,
+                    boolean foco, int fila, int columna) {
+                super.getTableCellRendererComponent(t, valor, seleccionada, foco, fila, columna);
+                setHorizontalAlignment(SwingConstants.CENTER);
+                setFont(getFont().deriveFont(Font.BOLD));
+                if (!seleccionada) {
+                    String estado = String.valueOf(valor);
+                    if ("SEGURO".equals(estado)) {
+                        setBackground(new Color(200, 240, 200)); // verde claro
+                        setForeground(new Color(0, 110, 0));
+                    } else if ("NECESITA AYUDA".equals(estado)) {
+                        setBackground(new Color(255, 205, 205)); // rojo claro
+                        setForeground(new Color(170, 0, 0));
+                    } else {
+                        setBackground(new Color(230, 230, 230)); // gris
+                        setForeground(Color.DARK_GRAY);
+                    }
+                }
+                return this;
+            }
+        });
     }
 
     public JTextField getTxtBuscar() { return txtBuscar; }
