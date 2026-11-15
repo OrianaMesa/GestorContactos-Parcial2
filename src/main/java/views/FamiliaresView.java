@@ -26,6 +26,11 @@ public class FamiliaresView extends JDialog {
     private JButton btnDesvincular;
     private JButton btnPrincipal;
 
+    private JTable tblMeTienen;
+    private DefaultTableModel modeloMeTienen;
+    private JButton btnAceptar;
+    private JButton btnRechazar;
+
     public FamiliaresView(Frame padre) {
         super(padre, "Mi red familiar", true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -54,7 +59,6 @@ public class FamiliaresView extends JDialog {
 
         // --- 2. FAMILIARES VINCULADOS ---
         JPanel panelFamiliares = new JPanel(new BorderLayout(5, 5));
-        panelFamiliares.setBorder(BorderFactory.createTitledBorder("Mis familiares"));
 
         modeloFamiliares = crearModelo("ID", "Documento", "Nombre", "Teléfono", "Estado");
         tblFamiliares = crearTabla(modeloFamiliares);
@@ -73,8 +77,29 @@ public class FamiliaresView extends JDialog {
         surFamiliares.add(btnDesvincular);
         panelFamiliares.add(surFamiliares, BorderLayout.SOUTH);
 
+        // --- 3. QUIÉN ME TIENE COMO FAMILIAR (se puede aceptar o rechazar) ---
+        JPanel panelMeTienen = new JPanel(new BorderLayout(5, 5));
+        modeloMeTienen = crearModelo("ID", "Documento", "Nombre", "Teléfono", "Estado");
+        tblMeTienen = crearTabla(modeloMeTienen);
+        panelMeTienen.add(new JScrollPane(tblMeTienen), BorderLayout.CENTER);
+
+        btnAceptar = new JButton("Aceptar");
+        btnRechazar = new JButton("Rechazar");
+        JPanel surMeTienen = new JPanel(new BorderLayout(5, 5));
+        surMeTienen.add(new JLabel(" Estas personas lo agregaron. Acepte para que aparezcan en \"Mis familiares\"."), BorderLayout.CENTER);
+        JPanel botonesMeTienen = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        botonesMeTienen.add(btnAceptar);
+        botonesMeTienen.add(btnRechazar);
+        surMeTienen.add(botonesMeTienen, BorderLayout.EAST);
+        panelMeTienen.add(surMeTienen, BorderLayout.SOUTH);
+
+        // Las dos listas van en pestañas para no hacer la ventana más grande
+        JTabbedPane pestanas = new JTabbedPane();
+        pestanas.addTab("Mis familiares", panelFamiliares);
+        pestanas.addTab("Me tienen como familiar", panelMeTienen);
+
         add(panelBuscar);
-        add(panelFamiliares);
+        add(pestanas);
         getRootPane().setDefaultButton(btnBuscar);
         setLocationRelativeTo(padre);
     }
@@ -136,4 +161,8 @@ public class FamiliaresView extends JDialog {
     public JButton getBtnCambiarEstado() { return btnCambiarEstado; }
     public JButton getBtnDesvincular() { return btnDesvincular; }
     public JButton getBtnPrincipal() { return btnPrincipal; }
+    public JTable getTblMeTienen() { return tblMeTienen; }
+    public DefaultTableModel getModeloMeTienen() { return modeloMeTienen; }
+    public JButton getBtnAceptar() { return btnAceptar; }
+    public JButton getBtnRechazar() { return btnRechazar; }
 }
