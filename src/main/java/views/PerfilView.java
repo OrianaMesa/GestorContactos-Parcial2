@@ -7,7 +7,7 @@ import java.awt.*;
  * Ventana para que el usuario edite sus datos (nombre y teléfono).
  * El documento se muestra, pero no se puede cambiar porque es con lo que inicia sesión.
  *
- * @author (escribe aquí tu nombre)
+ * @author
  */
 public class PerfilView extends JDialog {
     private JTextField txtDocumento;
